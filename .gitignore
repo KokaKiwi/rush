@@ -1,3 +1,7 @@
 # Build stuff
 rsh
 main.ll
+
+# Misc
+.*
+!.gitignore
