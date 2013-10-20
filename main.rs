@@ -8,9 +8,7 @@
 #[license = "GPLv3"];
 
 extern mod extra;
-
 use std::os;
-
 mod rush;
 
 fn main()

@@ -1,5 +1,6 @@
 # Build stuff
 rsh
+rsh_tests
 main.ll
 
 # Misc
