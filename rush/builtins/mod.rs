@@ -1,5 +1,5 @@
 use std::hashmap::HashMap;
-use rush::shared::BuiltinFn;
+use rush::shell::BuiltinFn;
 
 pub mod exit;
 
@@ -10,11 +10,4 @@ pub fn create_builtins() -> ~HashMap<~str, BuiltinFn>
     builtins.insert(exit::NAME.to_owned(), exit::builtin_exit);
 
     ~builtins
-}
-
-#[test]
-fn test_builtins()
-{
-    let builtins = create_builtins();
-    assert_eq!(builtins.len(), 1);
 }

@@ -1,5 +1,5 @@
 use std::os;
-use rush::shared::*;
+use rush::shell::CommandErr;
 
 pub static NAME: &'static str = "exit";
 

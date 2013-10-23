@@ -1,9 +1,10 @@
 use std::hashmap::HashMap;
 use std::vec;
 use std::run;
-use rush::shared::*;
 use rush::builtins;
 use rush::builtins::exit;
+
+pub type BuiltinFn = extern "Rust" fn (args: &[~str]) -> Result<bool, CommandErr>;
 
 struct Shell
 {
@@ -11,6 +12,11 @@ struct Shell
 
     prompt: ~str,
     builtins: ~HashMap<~str, BuiltinFn>,
+}
+
+pub enum CommandErr
+{
+    CommandNotFound(~str),
 }
 
 impl Shell
