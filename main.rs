@@ -9,9 +9,6 @@
 
 #[feature(globs)];
 
-#[deny(unused_imports)];
-#[deny(unused_variable)];
-
 extern mod extra;
 use std::os;
 
