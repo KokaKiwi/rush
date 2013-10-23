@@ -3,7 +3,7 @@ use rush::shell::CommandErr;
 
 pub static NAME: &'static str = "exit";
 
-pub fn builtin_exit(args: &[~str]) -> Result<bool, CommandErr>
+pub fn builtin(args: &[~str]) -> Result<bool, CommandErr>
 {
     println("Goodbye. :)");
 

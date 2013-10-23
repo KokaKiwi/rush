@@ -8,10 +8,7 @@ pub type BuiltinFn = extern fn (args: &[~str]) -> Result<bool, CommandErr>;
 
 struct Shell
 {
-    instream: @Reader,
-
     prompt: ~str,
-    show_prompt: bool,
 
     builtins: ~HashMap<~str, BuiltinFn>,
 }
@@ -23,36 +20,33 @@ pub enum CommandErr
 
 impl Shell
 {
-    pub fn new(instream: @Reader, show_prompt: bool) -> Shell
+    pub fn new() -> Shell
     {
         Shell {
-            instream: instream,
-
             prompt: ~"$ ",
-            show_prompt: show_prompt,
 
             builtins: builtins::create_builtins(),
         }
     }
 
-    pub fn run(&self)
+    pub fn run(&self, instream: @Reader, show_prompt: bool)
     {
-        if self.show_prompt
+        if show_prompt
         {
             println("Rush started! Press Ctrl+D or type 'quit' to quit.");
         }
 
-        while !self.instream.eof()
+        while !instream.eof()
         {
-            if self.show_prompt
+            if show_prompt
             {
                 print(self.prompt);
             }
 
-            let line = self.instream.read_line();
-            if !self.instream.eof()
+            let line = instream.read_line();
+            if !instream.eof()
             {
-                match self.exec(line)
+                match self.exec_line(line)
                 {
                     Ok(stop) if stop => { break; }
                     Ok(_) => {}
@@ -68,11 +62,17 @@ impl Shell
             }
             else
             {
-                exit::builtin_exit([]);
+                exit::builtin([]);
             }
         }
     }
 
+    pub fn exec_line(&self, line: ~str) -> Result<bool, CommandErr>
+    {
+        self.exec(line)
+    }
+
+    // command will be replaced by a Command type (pipe, redirs, etc...)
     fn exec(&self, command: ~str) -> Result<bool, CommandErr>
     {
         let mut words: ~[~str] = ~[];

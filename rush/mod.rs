@@ -43,6 +43,6 @@ pub fn start(args: ~[~str])
         show_prompt = false;
     }
 
-    let shell = shell::Shell::new(instream, show_prompt);
-    shell.run();
+    let shell = shell::Shell::new();
+    shell.run(instream, show_prompt);
 }

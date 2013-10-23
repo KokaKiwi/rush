@@ -28,7 +28,6 @@ $(MAIN_LL_SOURCE):	$(SOURCES)
 
 clean:
 	rm -f $(EXE_NAME) $(TEST_NAME) $(MAIN_LL_SOURCE)
-	rm -f start.ll start.o.ll
 
 doc:
 	$(RUSTDOC) $(RUSTDOCFLAGS) $(MAIN_SOURCE)
