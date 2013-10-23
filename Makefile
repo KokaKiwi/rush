@@ -3,6 +3,9 @@ RUSTC				?=	$(shell which rustc)
 RUSTCFLAGS			:=
 RUSTOFLAGS			:=
 
+RUSTDOC				?=	$(shell which rustdoc)
+RUSTDOCFLAGS		:=
+
 SOURCES				:=	$(shell find rush -type f -name "*.rs")
 SOURCES				+=	main.rs
 
@@ -27,5 +30,10 @@ clean:
 	rm -f $(EXE_NAME) $(TEST_NAME) $(MAIN_LL_SOURCE)
 	rm -f start.ll start.o.ll
 
+doc:
+	$(RUSTDOC) $(RUSTDOCFLAGS) $(MAIN_SOURCE)
+
 test:				$(TEST_NAME)
 	@./$(TEST_NAME)
+
+.PHONY:				all clean doc test
