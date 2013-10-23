@@ -2,7 +2,6 @@ use extra::getopts::groups;
 use extra::fileinput::FileInput;
 use std::io::stdin;
 use std::vec;
-use std::str;
 use std::run;
 
 pub fn start(args: ~[~str])
