@@ -7,8 +7,14 @@
 #[desc = "A shell written in Rust"];
 #[license = "GPLv3"];
 
+#[feature(globs)];
+
+#[deny(unused_imports)];
+#[deny(unused_variable)];
+
 extern mod extra;
 use std::os;
+
 mod rush;
 
 fn main()

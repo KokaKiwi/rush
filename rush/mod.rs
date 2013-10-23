@@ -1,8 +1,10 @@
 use extra::getopts::groups;
 use extra::fileinput::FileInput;
 use std::io::stdin;
-use std::vec;
-use std::run;
+
+mod builtins;
+mod shared;
+mod shell;
 
 pub fn start(args: ~[~str])
 {
@@ -32,7 +34,7 @@ pub fn start(args: ~[~str])
         return;
     }
 
-    println("Rush started! Press Ctrl+C or type 'quit' to quit.");
+    println("Rush started! Press Ctrl+D or type 'quit' to quit.");
 
     let mut instream = stdin();
     if !matches.free.is_empty()
@@ -40,55 +42,6 @@ pub fn start(args: ~[~str])
         instream = @FileInput::from_args() as @Reader;
     }
 
-    while !instream.eof()
-    {
-        print("> ");
-        let line = instream.read_line();
-        if !instream.eof()
-        {
-            match exec_command(line)
-            {
-                CommandStop => { break; }
-                _ => {}
-            }
-        }
-        else
-        {
-            println("");
-        }
-    }
-}
-
-enum CommandResult
-{
-    CommandOk,
-    CommandStop
-}
-
-fn exec_command(command: ~str) -> CommandResult
-{
-    match command
-    {
-        ~"exit" => { CommandStop }
-        _ => {
-            let mut words: ~[~str] = ~[];
-
-            for word in command.word_iter()
-            {
-                words = vec::append_one(words, word.into_owned());
-            }
-
-            let program = words[0].as_slice();
-            let args = words.slice_from(1);
-
-            let mut options = run::ProcessOptions::new();
-            options.in_fd = Some(0);
-            options.out_fd = Some(1);
-            options.err_fd = Some(2);
-
-            run::Process::new(program, args, options);
-
-            CommandOk
-        }
-    }
+    let shell = shell::Shell::new(instream);
+    shell.run();
 }
