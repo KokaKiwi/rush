@@ -22,7 +22,7 @@ pub fn start(args: ~[~str])
         println("rush 1.0.0");
         println("");
         println("Usage:");
-        println!("  {:s}", program);
+        println!("  {:s} [file]", program);
         println("");
         print(groups::usage("Rush Shell", opts));
         return;
@@ -33,14 +33,16 @@ pub fn start(args: ~[~str])
         return;
     }
 
-    println("Rush started! Press Ctrl+D or type 'quit' to quit.");
 
+    let mut show_prompt = true;
     let mut instream = stdin();
+
     if !matches.free.is_empty()
     {
         instream = @FileInput::from_args() as @Reader;
+        show_prompt = false;
     }
 
-    let shell = shell::Shell::new(instream);
+    let shell = shell::Shell::new(instream, show_prompt);
     shell.run();
 }

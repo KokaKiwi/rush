@@ -4,13 +4,15 @@ use std::run;
 use rush::builtins;
 use rush::builtins::exit;
 
-pub type BuiltinFn = extern "Rust" fn (args: &[~str]) -> Result<bool, CommandErr>;
+pub type BuiltinFn = extern fn (args: &[~str]) -> Result<bool, CommandErr>;
 
 struct Shell
 {
     instream: @Reader,
 
     prompt: ~str,
+    show_prompt: bool,
+
     builtins: ~HashMap<~str, BuiltinFn>,
 }
 
@@ -21,20 +23,32 @@ pub enum CommandErr
 
 impl Shell
 {
-    pub fn new(instream: @Reader) -> Shell
+    pub fn new(instream: @Reader, show_prompt: bool) -> Shell
     {
         Shell {
             instream: instream,
+
             prompt: ~"$ ",
+            show_prompt: show_prompt,
+
             builtins: builtins::create_builtins(),
         }
     }
 
     pub fn run(&self)
     {
+        if self.show_prompt
+        {
+            println("Rush started! Press Ctrl+D or type 'quit' to quit.");
+        }
+
         while !self.instream.eof()
         {
-            print(self.prompt);
+            if self.show_prompt
+            {
+                print(self.prompt);
+            }
+
             let line = self.instream.read_line();
             if !self.instream.eof()
             {
@@ -46,7 +60,7 @@ impl Shell
                         match e
                         {
                             CommandNotFound(command) => {
-                                println!("Command not found: {}", command);
+                                println!("Command not found: {:s}", command);
                             }
                         }
                     }
