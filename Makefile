@@ -1,38 +1,33 @@
+RUSTC			?=	rustc
+RUSTCFLAGS		:=
 
-RUSTC				?=	$(shell which rustc)
-RUSTCFLAGS			:=
-RUSTOFLAGS			:=
+RUSTDOC			?=	rustdoc
+RUSTDOCFLAGS	:=
 
-RUSTDOC				?=	$(shell which rustdoc)
-RUSTDOCFLAGS		:=
+SOURCES			:=	$(shell find src -type f -name '*.rs')
+MAIN_SOURCE		:=	src/main.rs
 
-SOURCES				:=	$(shell find rush -type f -name "*.rs")
-SOURCES				+=	main.rs
+EXE_NAME		:=	rush
+TEST_NAME		:=	rush_tests
 
-MAIN_SOURCE			:=	main.rs
-MAIN_LL_SOURCE		:=	$(MAIN_SOURCE:.rs=.ll)
+all:			$(EXE_NAME)
 
-EXE_NAME			:=	rsh
-TEST_NAME			:=	rsh_tests
+$(EXE_NAME):	$(SOURCES)
+	$(RUSTC) $(RUSTCFLAGS) -o $@ $(MAIN_SOURCE)
 
-all:				$(EXE_NAME) $(TEST_NAME) $(MAIN_LL_SOURCE)
-
-$(EXE_NAME):		$(SOURCES)
-	$(RUSTC) $(RUSTCFLAGS) $(RUSTOFLAGS) -o $@ $(MAIN_SOURCE)
-
-$(TEST_NAME):		$(SOURCES)
-	$(RUSTC) $(RUSTCFLAGS) $(RUSTOFLAGS) --test -o $@ $(MAIN_SOURCE)
-
-$(MAIN_LL_SOURCE):	$(SOURCES)
-	$(RUSTC) $(RUSTCFLAGS) --emit-llvm -S -o $@ $(MAIN_SOURCE)
-
-clean:
-	rm -f $(EXE_NAME) $(TEST_NAME) $(MAIN_LL_SOURCE)
+$(TEST_NAME):	$(SOURCES)
+	$(RUSTC) $(RUSTCFLAGS) --test -o $@ $(MAIN_SOURCE)
 
 doc:
 	$(RUSTDOC) $(RUSTDOCFLAGS) $(MAIN_SOURCE)
 
-test:				$(TEST_NAME)
-	@./$(TEST_NAME)
+test:			$(TEST_NAME)
+	./$(TEST_NAME)
 
-.PHONY:				all clean doc test
+bench:			$(TEST_NAME)
+	./$(TEST_NAME) --bench
+
+clean:
+	rm -f $(EXE_NAME) $(TEST_NAME)
+
+.PHONY:			all doc test bench clean
