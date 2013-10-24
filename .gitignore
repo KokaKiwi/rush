@@ -1,7 +1,7 @@
 # Build stuff
-rush
-rush_tests
-doc
+/rush
+/rush_tests
+/doc
 
 # Sublime Text stuff
 *.sublime-*
