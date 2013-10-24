@@ -3,6 +3,7 @@ use extra::fileinput::FileInput;
 use std::io::stdin;
 
 mod builtins;
+mod parser;
 mod shell;
 
 pub fn start(args: ~[~str])

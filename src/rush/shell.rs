@@ -1,16 +1,17 @@
 use std::hashmap::HashMap;
-use std::vec;
 use std::run;
 use rush::builtins;
 use rush::builtins::exit;
+use rush::parser::*;
 
 pub type BuiltinFn = extern fn (args: &[~str]) -> Result<bool, CommandErr>;
 
 struct Shell
 {
     prompt: ~str,
-
     builtins: ~HashMap<~str, BuiltinFn>,
+
+    parser: ~Parser,
 }
 
 pub enum CommandErr
@@ -24,8 +25,9 @@ impl Shell
     {
         Shell {
             prompt: ~"$ ",
-
             builtins: builtins::create_builtins(),
+
+            parser: ~Parser::new(),
         }
     }
 
@@ -69,21 +71,30 @@ impl Shell
 
     pub fn exec_line(&self, line: ~str) -> Result<bool, CommandErr>
     {
-        self.exec(line)
+        match self.parser.parse(line)
+        {
+            Ok(command) => self.exec(command),
+            Err(e) => fail!("Error: {:?}", e),
+        }
     }
 
-    // command will be replaced by a Command type (pipe, redirs, etc...)
-    fn exec(&self, command: ~str) -> Result<bool, CommandErr>
+}
+
+impl Shell
+{
+    fn exec(&self, command: Command) -> Result<bool, CommandErr>
     {
-        let mut words: ~[~str] = ~[];
-
-        for word in command.word_iter()
+        match command
         {
-            words = vec::append_one(words, word.to_owned());
+            Simple(cmd) => self.exec_simple(cmd),
+            _ => Ok(false),
         }
+    }
 
-        let program = words[0].to_owned();
-        let args = words.slice_from(1);
+    fn exec_simple(&self, command: ~[~str]) -> Result<bool, CommandErr>
+    {
+        let program = command[0].to_owned();
+        let args = command.slice_from(1);
 
         match self.builtins.find(&program)
         {
