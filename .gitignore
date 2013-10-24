@@ -4,6 +4,9 @@ rsh_tests
 doc
 main.ll
 
+# Sublime Text stuff
+*.sublime-*
+
 # Misc
 .*
 !.gitignore
